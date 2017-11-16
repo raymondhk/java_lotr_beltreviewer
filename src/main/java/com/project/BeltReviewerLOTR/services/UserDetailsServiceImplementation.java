@@ -1,5 +1,7 @@
 package com.project.BeltReviewerLOTR.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +32,7 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
 			throw new UsernameNotFoundException("User not found");
 		}
 
-		user.setUpdatedAt(new Date());
+		user.setUpdatedAt(LocalDateTime.now());
 		uRepository.save(user);
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getAuthorities(user));
 	}

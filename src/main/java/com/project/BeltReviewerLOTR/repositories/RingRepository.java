@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface RingRepository extends CrudRepository<Ring,Long>{
 	List<Ring> findAll();
 	List<Ring> findByCreator(String username);
+	Ring findByName(String ring);
 	Ring findById(Long id);
 }

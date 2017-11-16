@@ -1,5 +1,7 @@
 package com.project.BeltReviewerLOTR.models;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -18,6 +20,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import javax.websocket.ClientEndpoint;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
@@ -31,9 +34,12 @@ public class User{
 	private Long id;
 	
 	@Size(min=2, message="Username must be at least 2 characters long")
+	@Column(unique=true)
 	private String username;
+	private int age;
 
 	@Email
+	@Column(unique=true)
 	private String email;
 
 	private String password;
@@ -43,10 +49,10 @@ public class User{
 
 	@Column(updatable=false)
 	@DateTimeFormat(pattern="MM:dd:yyyy HH:mm:ss")
-	private Date createdAt;
+	private LocalDateTime createdAt;
 	
 	@DateTimeFormat(pattern="MM:dd:yyyy HH:mm:ss")
-	private Date updatedAt;
+	private LocalDateTime updatedAt;
 
 	// @ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	// @JoinTable(
@@ -58,13 +64,21 @@ public class User{
 
 	private int permissionLevel;
 
-	@OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(
+		name="users_guilds",
+		joinColumns = @JoinColumn(name="user_id"),
+		inverseJoinColumns = @JoinColumn(name="guild_id")
+	)
+	private List<Guild> guilds;
+
+	@OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	private List<Ring> rings;
 
 	@PrePersist
-	public void onCreate(){this.createdAt = new Date();}
+	public void onCreate(){this.createdAt = LocalDateTime.now();}
 	@PreUpdate
-	public void onUpdate(){this.updatedAt = new Date();}
+	public void onUpdate(){this.updatedAt = LocalDateTime.now();}
 	
 	public Long getId() {
 		return id;
@@ -72,16 +86,16 @@ public class User{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Date getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-	public Date getUpdatedAt() {
+	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 	
@@ -172,5 +186,29 @@ public class User{
 	 */
 	public void setRings(List<Ring> rings) {
 		this.rings = rings;
+	}
+	/**
+	 * @return the guilds
+	 */
+	public List<Guild> getGuilds() {
+		return guilds;
+	}
+	/**
+	 * @param guilds the guilds to set
+	 */
+	public void setGuilds(List<Guild> guilds) {
+		this.guilds = guilds;
+	}
+	/**
+	 * @return the age
+	 */
+	public int getAge() {
+		return age;
+	}
+	/**
+	 * @param age the age to set
+	 */
+	public void setAge(int age) {
+		this.age = age;
 	}
 }

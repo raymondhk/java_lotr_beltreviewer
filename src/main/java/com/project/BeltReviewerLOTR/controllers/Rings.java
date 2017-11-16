@@ -29,18 +29,22 @@ public class Rings{
 		this.uService = uService;
 	}
 	
-	@RequestMapping("/ring")
-	public String addRing(@Valid @ModelAttribute("ring") Ring ring, Principal principal, Model model){
+	@RequestMapping("/admin/ring")
+	public String addRing(@Valid @ModelAttribute("ring") Ring ring, @ModelAttribute("ringError") String ringError, Principal principal, Model model){
 		String email = principal.getName();
 		User curUser = uService.findByEmail(email);
 		model.addAttribute("currentUser", curUser);
 		return "addRing";
 	}	
 
-	@PostMapping("/ring")
-	public String forgeRing(@Valid @ModelAttribute("ring") Ring ring, Principal principal, Model model, BindingResult res) {
+	@PostMapping("/admin/ring")
+	public String forgeRing(@Valid @ModelAttribute("ring") Ring ring, Principal principal, Model model, BindingResult res, RedirectAttributes rAttributes) {
 		if(res.hasErrors()) {
 			return "addRing";
+		}
+		if(uService.findRingByName(ring.getName()) != null){
+			rAttributes.addFlashAttribute("ringError", "Ring already exists forge a new ring!");
+			return "redirect:/admin/ring";
 		}
 		String email = principal.getName();
 		User curUser = uService.findByEmail(email);
@@ -52,10 +56,19 @@ public class Rings{
 	public String bindRing(@RequestParam(value="rings") Long ringId, Principal principal) {
 		String email = principal.getName();
 		User curUser = uService.findByEmail(email);
-		List<Ring> bindedRings = curUser.getRings();
-		bindedRings.add(uService.getRing(ringId));
-		uService.updateUser(curUser);
+		Ring thisRing = uService.getRing(ringId);
+		thisRing.setUser(curUser);
+		uService.updateRing(thisRing);
+		// List<Ring> bindedRings = curUser.getRings();
+		// bindedRings.add(uService.getRing(ringId));
+		// uService.updateUser(curUser);
 		return "redirect:/dashboard";
-		}
+	}
+	
+	@RequestMapping("/unbind/{id}")
+	public String unbindRing(@PathVariable("id") Long id) {
+		uService.unbindRing(id);
+		return "redirect:/dashboard";
+	}
 
 }

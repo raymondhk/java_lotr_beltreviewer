@@ -25,7 +25,7 @@ pageEncoding="UTF-8"%>
 				  <ul class="nav navbar-nav">
 					<li><a href="/dashboard">Home</a></li>
 					<c:if test="${currentUser.permissionLevel <= 2}">
-							<li class="active"><a href="/ring">Ring Creator</a></li>
+							<li class="active"><a href="/admin/ring">Ring Creator</a></li>
 							<li><a href="#">Person/Team Creator</a></li>
 					</c:if>
 				  </ul>
@@ -48,7 +48,8 @@ pageEncoding="UTF-8"%>
 						<br>
 						<div class="col-md-6">
 							<h2>Forge Ring:</h2>
-							<form:form action="/ring" method="post" modelAttribute="ring">
+							<p class="red">${ringError}</p>
+							<form:form action="/admin/ring" method="post" modelAttribute="ring">
 								<div class="form-group">
 									Name: <form:input type="text" path="name" class="form-control"/>
 								</div>

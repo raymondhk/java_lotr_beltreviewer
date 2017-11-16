@@ -29,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	public void configure(HttpSecurity http) throws Exception{
 		http.authorizeRequests()
 			// Allow anyone to visit the following routes:
-			.antMatchers("/css/**","/js/**","/register", "/dashboard").permitAll()
+			.antMatchers("/css/**","/js/**","/register").permitAll()
 			// Allow only admins to visit routes beginning with /admin
 			.antMatchers("/admin/**").access("hasRole('ADMIN')")
 			.anyRequest().authenticated().and()
